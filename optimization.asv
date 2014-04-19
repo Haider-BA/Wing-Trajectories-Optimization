@@ -1,0 +1,81 @@
+
+x0=[0 30 16];
+LB = [5 25 10];
+UB = [50 40 20];
+
+
+
+
+%options = optimset('TolX',1e-4,'TolFun',1e-4,'TolCon',1e-4);
+
+% pattern search
+% it works !
+% x0 = [30 16];
+% [x,fval,exitflag,output] = GlobalSearch(@main,x0,[],[],[],[],LB,[],@seminfcon);
+
+% ga
+% find the local min rather than the global
+nvars = 2;
+options = gaoptimset('PlotFcns',{@gaplotbestf,@gaplotstopping});
+fminuncOptions = optimoptions(@fminunc,'Display','iter','Algorithm','quasi-newton');
+options = gaoptimset(options,'HybridFcn',{@patternsearch, fminconOptions});
+[x,fval,exitflag,output] = ga(@main,nvars,[],[],[],[],LB,UB,[],options);
+
+% 
+% x0 = [30 16];
+% [x,fval,exitflag,output] = GlobalSearch(@main,x0,[],[],[],[],LB,[],@seminfcon);
+
+
+% 
+% opts = optimset('Algorithm','interior-point','Display','iter','TolCon',1e-4,'TolFun',1e4,'TolX',1e-6);
+% problem = createOptimProblem('fmincon','objective', ...
+%     @(x) main(x),'x0',x0,'lb',LB,'ub',UB, ...
+%     'nonlcon',@seminfcon,'options',opts);
+% 
+% 
+% % % Construct a GlobalSearch object
+% gs = GlobalSearch(gs,'StartPointsToRun','bounds-ineqs', ...
+%     'MaxWaitCycle',3,'BasinRadiusFactor',1);
+% % Run GlobalSearch
+% tic;
+% xgs = run(gs,problem);
+% toc
+% xgs
+% 
+% 
+% 
+% 
+% % Set the UseParallel property of MultiStart
+% ms = MultiStart(ms,'UseParallel','always');
+% 
+% try
+%     demoOpenedPool = false;
+%     % Create a parallel pool if one does not already exist
+%     % (requires Parallel Computing Toolbox)
+%     if max(size(gcp)) == 0 % if no pool
+%         parpool
+%         demoOpenedPool = true;
+%     end
+% catch ME
+%     warning(message('globaloptim:globaloptimdemos:opticalInterferenceDemo:noPCT'));
+% end
+% 
+% % Run the solver
+% tic;
+% xms = run(ms,problem,100);
+% toc
+% xms
+% 
+% if demoOpenedPool
+%     % Make sure to delete the pool if one was created in this example
+%     delete(gcp) % delete the pool
+% end
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
